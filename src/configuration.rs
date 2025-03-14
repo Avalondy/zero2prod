@@ -1,4 +1,8 @@
 use serde_aux::prelude::deserialize_number_from_string;
+use sqlx::{
+    postgres::{PgConnectOptions, PgSslMode},
+    ConnectOptions,
+};
 use std::env;
 
 use secrecy::{ExposeSecret, SecretBox};
@@ -24,6 +28,8 @@ pub struct DatabaseSettings {
     port: u16,
     host: String,
     pub database_name: String,
+    // If the connection need to be encrypted or not
+    pub require_ssl: bool,
 }
 
 pub fn get_configuration() -> Result<Settings, config::ConfigError> {
@@ -88,24 +94,24 @@ impl TryFrom<String> for Environment {
 }
 
 impl DatabaseSettings {
-    pub fn connection_string(&self) -> SecretBox<String> {
-        SecretBox::new(Box::new(format!(
-            "postgres://{}:{}@{}:{}/{}",
-            self.username,
-            self.password.expose_secret(),
-            self.host,
-            self.port,
-            self.database_name
-        )))
+    pub fn without_db(&self) -> PgConnectOptions {
+        let ssl_mode = if self.require_ssl {
+            PgSslMode::Require
+        } else {
+            // Try an encrypted connection, fallback to unencrypted if it fails
+            PgSslMode::Prefer
+        };
+        PgConnectOptions::new()
+            .host(&self.host)
+            .username(&self.username)
+            .password(&self.password.expose_secret())
+            .port(self.port)
+            .ssl_mode(ssl_mode)
     }
 
-    pub fn connection_string_without_db(&self) -> SecretBox<String> {
-        SecretBox::new(Box::new(format!(
-            "postgres://{}:{}@{}:{}",
-            self.username,
-            self.password.expose_secret(),
-            self.host,
-            self.port
-        )))
+    pub fn with_db(&self) -> PgConnectOptions {
+        self.without_db()
+            .database(&self.database_name)
+            .log_statements(tracing_log::log::LevelFilter::Trace)
     }
 }
