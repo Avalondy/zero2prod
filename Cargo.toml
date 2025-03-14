@@ -4,17 +4,18 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-actix-web = "4.9.0"
-config = "0.15.8"
+actix-web = "4.10.2"
+config = "0.15.11"
 secrecy = { version = "0.10.3", features = ["serde"] }
-serde = { version = "1.0.218", features = ["derive"] }
-tokio = { version = "1.43.0", features = ["macros", "rt-multi-thread"] }
+serde = { version = "1.0.219", features = ["derive"] }
+serde-aux = "4.6.0"
+tokio = { version = "1.44.1", features = ["macros", "rt-multi-thread"] }
 tracing = { version = "0.1.41", features = ["log"] }
 tracing-actix-web = "0.7"
 tracing-bunyan-formatter = "0.3.10"
 tracing-log = "0.2.0"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "registry"] }
-uuid = { version = "1.14.0", features = ["v4"] }
+uuid = { version = "1.15.1", features = ["v4"] }
 
 # Using table-like toml syntax to avoid a super-long line!
 [dependencies.sqlx]
@@ -30,4 +31,4 @@ features = [
 ]
 
 [dev-dependencies]
-reqwest = "0.12.12"
+reqwest = "0.12.14"

@@ -1,3 +1,4 @@
+use serde_aux::prelude::deserialize_number_from_string;
 use std::env;
 
 use secrecy::{ExposeSecret, SecretBox};
@@ -10,6 +11,7 @@ pub struct Settings {
 
 #[derive(serde::Deserialize)]
 pub struct ApplicationSettings {
+    #[serde(deserialize_with = "deserialize_number_from_string")]
     pub port: u16,
     pub host: String,
 }
@@ -18,6 +20,7 @@ pub struct ApplicationSettings {
 pub struct DatabaseSettings {
     username: String,
     password: SecretBox<String>,
+    #[serde(deserialize_with = "deserialize_number_from_string")]
     port: u16,
     host: String,
     pub database_name: String,
@@ -41,6 +44,13 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
         .add_source(config::File::from(
             configuration_directory.join(environment_filename),
         ))
+        // Add in settings from environment variables (with a prefix of APP and '__' as separator)
+        // E.g. `APP_APPLICATION__PORT=5001 would set `Settings.application.port`
+        .add_source(
+            config::Environment::with_prefix("APP")
+                .prefix_separator("_")
+                .separator("__"),
+        )
         .build()?;
     // Try to convert the configuration values into Settings type
     settings.try_deserialize()
