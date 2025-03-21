@@ -17,6 +17,7 @@ tracing-log = "0.2.0"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "registry"] }
 unicode-segmentation = "1.12.0"
 uuid = { version = "1.15.1", features = ["v4"] }
+validator = "0.20.0"
 
 # Using table-like toml syntax to avoid a super-long line!
 [dependencies.sqlx]
