@@ -627,6 +627,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "deunicode"
+version = "1.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dc55fe0d1f6c107595572ec8b107c0999bb1a2e0b75e37429a4fb0d6474a0e7d"
+
+[[package]]
 name = "digest"
 version = "0.10.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -718,6 +724,16 @@ dependencies = [
  "concurrent-queue",
  "parking",
  "pin-project-lite",
+]
+
+[[package]]
+name = "fake"
+version = "4.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "206294f947d314ea224901e0b409c25465d1014ea0c3af27baaec861061a0426"
+dependencies = [
+ "deunicode",
+ "rand 0.9.0",
 ]
 
 [[package]]
@@ -3605,6 +3621,7 @@ dependencies = [
  "actix-web",
  "claims",
  "config",
+ "fake",
  "reqwest",
  "secrecy",
  "serde",
